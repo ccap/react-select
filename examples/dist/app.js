@@ -48,7 +48,7 @@ var _componentsStates2 = _interopRequireDefault(_componentsStates);
 _reactDom2['default'].render(_react2['default'].createElement(
 	'div',
 	null,
-	_react2['default'].createElement(_componentsCities2['default'], { label: 'Cities', searchable: true }),
+	_react2['default'].createElement(_componentsCities2['default'], { label: 'Cities' }),
 	_react2['default'].createElement(_componentsStates2['default'], { label: 'States', searchable: true }),
 	_react2['default'].createElement(_componentsMultiselect2['default'], { label: 'Multiselect' }),
 	_react2['default'].createElement(_componentsContributors2['default'], { label: 'Contributors (Async)' }),
@@ -69,107 +69,21 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactSelect = require('react-select');
+var _reactVirtualizedSelect = require('react-virtualized-select');
 
-var _reactSelect2 = _interopRequireDefault(_reactSelect);
-
-var _reactVirtualized = require('react-virtualized');
+var _reactVirtualizedSelect2 = _interopRequireDefault(_reactVirtualizedSelect);
 
 var DATA = require('../data/cities');
 
-var OPTION_HEIGHT = 35;
-var MAX_OPTIONS_HEIGHT = 200;
-
 var CitiesField = _react2['default'].createClass({
 	displayName: 'CitiesField',
-	propTypes: {
-		label: _react2['default'].PropTypes.string,
-		searchable: _react2['default'].PropTypes.bool
-	},
-	getDefaultProps: function getDefaultProps() {
-		return {
-			label: 'Cities:',
-			searchable: true
-		};
-	},
 	getInitialState: function getInitialState() {
-		return {
-			country: 'AU',
-			disabled: false,
-			searchable: this.props.searchable,
-			selectValue: 'new-south-wales',
-			clearable: true
-		};
-	},
-	switchCountry: function switchCountry(e) {
-		var newCountry = e.target.value;
-		console.log('Country changed to ' + newCountry);
-		this.setState({
-			country: newCountry,
-			selectValue: null
-		});
+		return {};
 	},
 	updateValue: function updateValue(newValue) {
-		console.log('State changed to ' + newValue);
 		this.setState({
 			selectValue: newValue
 		});
-	},
-	focusStateSelect: function focusStateSelect() {
-		this.refs.stateSelect.focus();
-	},
-	toggleCheckbox: function toggleCheckbox(e) {
-		var newState = {};
-		newState[e.target.name] = e.target.checked;
-		this.setState(newState);
-	},
-	renderMenu: function renderMenu(_ref) {
-		var focusedOption = _ref.focusedOption;
-		var focusOption = _ref.focusOption;
-		var labelKey = _ref.labelKey;
-		var options = _ref.options;
-		var selectValue = _ref.selectValue;
-		var valueArray = _ref.valueArray;
-
-		var focusedOptionIndex = options.indexOf(focusedOption);
-		var height = Math.min(MAX_OPTIONS_HEIGHT, options.length * OPTION_HEIGHT);
-
-		return _react2['default'].createElement(
-			_reactVirtualized.AutoSizer,
-			{ disableHeight: true },
-			function (_ref2) {
-				var width = _ref2.width;
-				return _react2['default'].createElement(_reactVirtualized.VirtualScroll, {
-					ref: 'VirtualScroll',
-					height: height,
-					rowHeight: OPTION_HEIGHT,
-					rowRenderer: function (index) {
-						return _react2['default'].createElement(
-							'div',
-							{
-								onMouseOver: function () {
-									return focusOption(options[index]);
-								},
-								onClick: function () {
-									return selectValue(options[index]);
-								},
-								style: {
-									backgroundColor: options[index] === focusedOption ? '#eee' : '#fff',
-									height: OPTION_HEIGHT,
-									display: 'flex',
-									alignItems: 'center',
-									padding: '0 .5rem'
-								}
-							},
-							options[index][labelKey]
-						);
-					},
-					rowsCount: options.length,
-					scrollToIndex: focusedOptionIndex,
-					width: width
-				});
-			}
-		);
 	},
 	render: function render() {
 		var options = DATA.CITIES;
@@ -179,35 +93,44 @@ var CitiesField = _react2['default'].createClass({
 			_react2['default'].createElement(
 				'h3',
 				{ className: 'section-heading' },
-				'World\'s Largest Cities'
+				'Large Datasets'
 			),
-			_react2['default'].createElement(
-				'h4',
-				null,
-				'Uses react-virtualized to display data'
-			),
-			_react2['default'].createElement(_reactSelect2['default'], { ref: 'stateSelect',
+			_react2['default'].createElement(_reactVirtualizedSelect2['default'], { ref: 'citySelect',
 				autofocus: true,
 				options: options,
 				simpleValue: true,
-				clearable: this.state.clearable,
-				name: 'selected-state',
-				disabled: this.state.disabled,
+				clearable: true,
+				name: 'select-city',
 				value: this.state.selectValue,
 				onChange: this.updateValue,
-				searchable: this.state.searchable,
+				searchable: true,
 				labelKey: 'name',
-				valueKey: 'name',
-				menuStyle: { overflow: 'hidden' },
-				menuRenderer: this.renderMenu
-			})
+				valueKey: 'name'
+			}),
+			_react2['default'].createElement(
+				'div',
+				{ className: 'hint' },
+				'Uses ',
+				_react2['default'].createElement(
+					'a',
+					{ href: 'https://github.com/bvaughn/react-virtualized' },
+					'react-virtualized'
+				),
+				' and ',
+				_react2['default'].createElement(
+					'a',
+					{ href: 'https://github.com/bvaughn/react-virtualized-select/' },
+					'react-virtualized-select'
+				),
+				' to display a list of the world\'s 1,000 largest cities.'
+			)
 		);
 	}
 });
 
 module.exports = CitiesField;
 
-},{"../data/cities":9,"react":undefined,"react-select":undefined,"react-virtualized":43}],3:[function(require,module,exports){
+},{"../data/cities":9,"react":undefined,"react-virtualized-select":25}],3:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -1601,6 +1524,162 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactSelect = require('react-select');
+
+var _reactSelect2 = _interopRequireDefault(_reactSelect);
+
+var _reactVirtualized = require('react-virtualized');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var VirtualizedSelect = function (_Component) {
+  _inherits(VirtualizedSelect, _Component);
+
+  function VirtualizedSelect(props, context) {
+    _classCallCheck(this, VirtualizedSelect);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(VirtualizedSelect).call(this, props, context));
+
+    _this._renderMenu = _this._renderMenu.bind(_this);
+    _this._rowRenderer = _this._rowRenderer.bind(_this);
+    return _this;
+  }
+
+  _createClass(VirtualizedSelect, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(_reactSelect2.default, _extends({}, this.props, {
+        menuRenderer: this._renderMenu,
+        menuStyle: { overflow: 'hidden' }
+      }));
+    }
+
+    // See https://github.com/JedWatson/react-select/#effeciently-rendering-large-lists-with-windowing
+
+  }, {
+    key: '_renderMenu',
+    value: function _renderMenu(_ref) {
+      var focusedOption = _ref.focusedOption;
+      var focusOption = _ref.focusOption;
+      var labelKey = _ref.labelKey;
+      var options = _ref.options;
+      var selectValue = _ref.selectValue;
+      var valueArray = _ref.valueArray;
+      var _props = this.props;
+      var maxHeight = _props.maxHeight;
+      var optionHeight = _props.optionHeight;
+      var rowRenderer = _props.rowRenderer;
+
+      var focusedOptionIndex = options.indexOf(focusedOption);
+      var height = Math.min(maxHeight, options.length * optionHeight);
+      var innerRowRenderer = rowRenderer || this._rowRenderer;
+
+      function wrappedRowRenderer(index) {
+        var option = options[index];
+
+        return innerRowRenderer({ focusedOption: focusedOption, focusedOptionIndex: focusedOptionIndex, focusOption: focusOption, labelKey: labelKey, option: option, options: options, selectValue: selectValue, valueArray: valueArray });
+      }
+
+      return _react2.default.createElement(
+        _reactVirtualized.AutoSizer,
+        { disableHeight: true },
+        function (_ref2) {
+          var width = _ref2.width;
+          return _react2.default.createElement(_reactVirtualized.VirtualScroll, {
+            className: 'VirtualSelectGrid',
+            height: height,
+            rowHeight: optionHeight,
+            rowRenderer: wrappedRowRenderer,
+            rowsCount: options.length,
+            scrollToIndex: focusedOptionIndex,
+            width: width
+          });
+        }
+      );
+    }
+  }, {
+    key: '_rowRenderer',
+    value: function _rowRenderer(_ref3) {
+      var focusedOption = _ref3.focusedOption;
+      var focusOption = _ref3.focusOption;
+      var labelKey = _ref3.labelKey;
+      var option = _ref3.option;
+      var selectValue = _ref3.selectValue;
+      var optionHeight = this.props.optionHeight;
+
+
+      var className = option === focusedOption ? 'VirtualizedSelectOption VirtualizedSelectFocusedOption' : 'VirtualizedSelectOption';
+
+      return _react2.default.createElement(
+        'div',
+        {
+          className: className,
+          onMouseOver: function onMouseOver() {
+            return focusOption(option);
+          },
+          onClick: function onClick() {
+            return selectValue(option);
+          },
+          style: {
+            height: optionHeight
+          }
+        },
+        option[labelKey]
+      );
+    }
+  }]);
+
+  return VirtualizedSelect;
+}(_react.Component);
+
+VirtualizedSelect.propTypes = {
+  maxHeight: _react.PropTypes.number.isRequired,
+  optionHeight: _react.PropTypes.number.isRequired,
+  rowRenderer: _react.PropTypes.func
+};
+VirtualizedSelect.defaultProps = {
+  maxHeight: 200,
+  optionHeight: 35
+};
+exports.default = VirtualizedSelect;
+},{"react":undefined,"react-select":undefined,"react-virtualized":46}],24:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = undefined;
+
+var _VirtualizedSelect = require('./VirtualizedSelect');
+
+var _VirtualizedSelect2 = _interopRequireDefault(_VirtualizedSelect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _VirtualizedSelect2.default;
+},{"./VirtualizedSelect":23}],25:[function(require,module,exports){
+arguments[4][24][0].apply(exports,arguments)
+},{"./VirtualizedSelect":24,"dup":24}],26:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
@@ -1737,7 +1816,7 @@ ArrowKeyStepper.propTypes = {
   rowsCount: _react.PropTypes.number.isRequired
 };
 exports.default = ArrowKeyStepper;
-},{"react":undefined,"react-addons-shallow-compare":49}],24:[function(require,module,exports){
+},{"react":undefined,"react-addons-shallow-compare":52}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1753,7 +1832,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = _ArrowKeyStepper3.default;
 exports.ArrowKeyStepper = _ArrowKeyStepper3.default;
-},{"./ArrowKeyStepper":23}],25:[function(require,module,exports){
+},{"./ArrowKeyStepper":26}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1920,7 +1999,7 @@ AutoSizer.defaultProps = {
   onResize: function onResize() {}
 };
 exports.default = AutoSizer;
-},{"../vendor/detectElementResize":44,"react":undefined,"react-addons-shallow-compare":49}],26:[function(require,module,exports){
+},{"../vendor/detectElementResize":47,"react":undefined,"react-addons-shallow-compare":52}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1936,7 +2015,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = _AutoSizer3.default;
 exports.AutoSizer = _AutoSizer3.default;
-},{"./AutoSizer":25}],27:[function(require,module,exports){
+},{"./AutoSizer":28}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2073,7 +2152,7 @@ ColumnSizer.propTypes = {
   width: _react.PropTypes.number.isRequired
 };
 exports.default = ColumnSizer;
-},{"../Grid":36,"react":undefined,"react-addons-shallow-compare":49}],28:[function(require,module,exports){
+},{"../Grid":39,"react":undefined,"react-addons-shallow-compare":52}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2089,7 +2168,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = _ColumnSizer3.default;
 exports.ColumnSizer = _ColumnSizer3.default;
-},{"./ColumnSizer":27}],29:[function(require,module,exports){
+},{"./ColumnSizer":30}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2248,7 +2327,7 @@ Column.propTypes = {
   width: _react.PropTypes.number.isRequired
 };
 exports.default = Column;
-},{"./SortIndicator":32,"react":undefined}],30:[function(require,module,exports){
+},{"./SortIndicator":35,"react":undefined}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2734,7 +2813,7 @@ FlexTable.defaultProps = {
   overscanRowsCount: 10
 };
 exports.default = FlexTable;
-},{"../Grid":36,"./FlexColumn":29,"./SortDirection":31,"classnames":undefined,"react":undefined,"react-addons-shallow-compare":49,"react-dom":undefined}],31:[function(require,module,exports){
+},{"../Grid":39,"./FlexColumn":32,"./SortDirection":34,"classnames":undefined,"react":undefined,"react-addons-shallow-compare":52,"react-dom":undefined}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2755,7 +2834,7 @@ var SortDirection = {
 };
 
 exports.default = SortDirection;
-},{}],32:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2804,7 +2883,7 @@ function SortIndicator(_ref) {
 SortIndicator.propTypes = {
   sortDirection: _react.PropTypes.oneOf([_SortDirection2.default.ASC, _SortDirection2.default.DESC])
 };
-},{"./SortDirection":31,"classnames":undefined,"react":undefined}],33:[function(require,module,exports){
+},{"./SortDirection":34,"classnames":undefined,"react":undefined}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2835,7 +2914,7 @@ exports.FlexTable = _FlexTable3.default;
 exports.FlexColumn = _FlexColumn3.default;
 exports.SortDirection = _SortDirection3.default;
 exports.SortIndicator = _SortIndicator3.default;
-},{"./FlexColumn":29,"./FlexTable":30,"./SortDirection":31,"./SortIndicator":32}],34:[function(require,module,exports){
+},{"./FlexColumn":32,"./FlexTable":33,"./SortDirection":34,"./SortIndicator":35}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3634,7 +3713,7 @@ Grid.defaultProps = {
   overscanRowsCount: 10
 };
 exports.default = Grid;
-},{"./GridUtils":35,"classnames":undefined,"dom-helpers/util/scrollbarSize":46,"raf":47,"react":undefined,"react-addons-shallow-compare":49}],35:[function(require,module,exports){
+},{"./GridUtils":38,"classnames":undefined,"dom-helpers/util/scrollbarSize":49,"raf":50,"react":undefined,"react-addons-shallow-compare":52}],38:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3937,7 +4016,7 @@ function updateScrollIndexHelper(_ref8) {
       }
     }
 }
-},{}],36:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3953,7 +4032,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = _Grid3.default;
 exports.Grid = _Grid3.default;
-},{"./Grid":34}],37:[function(require,module,exports){
+},{"./Grid":37}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4163,7 +4242,7 @@ function scanForUnloadedRanges(_ref3) {
 
   return unloadedRanges;
 }
-},{"react":undefined,"react-addons-shallow-compare":49}],38:[function(require,module,exports){
+},{"react":undefined,"react-addons-shallow-compare":52}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4179,7 +4258,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = _InfiniteLoader3.default;
 exports.InfiniteLoader = _InfiniteLoader3.default;
-},{"./InfiniteLoader":37}],39:[function(require,module,exports){
+},{"./InfiniteLoader":40}],42:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4281,7 +4360,7 @@ ScrollSync.propTypes = {
   children: _react.PropTypes.func.isRequired
 };
 exports.default = ScrollSync;
-},{"react":undefined,"react-addons-shallow-compare":49}],40:[function(require,module,exports){
+},{"react":undefined,"react-addons-shallow-compare":52}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4297,7 +4376,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = _ScrollSync3.default;
 exports.ScrollSync = _ScrollSync3.default;
-},{"./ScrollSync":39}],41:[function(require,module,exports){
+},{"./ScrollSync":42}],44:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4489,7 +4568,7 @@ VirtualScroll.defaultProps = {
   overscanRowsCount: 10
 };
 exports.default = VirtualScroll;
-},{"../Grid":36,"classnames":undefined,"react":undefined,"react-addons-shallow-compare":49}],42:[function(require,module,exports){
+},{"../Grid":39,"classnames":undefined,"react":undefined,"react-addons-shallow-compare":52}],45:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4505,7 +4584,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = _VirtualScroll3.default;
 exports.VirtualScroll = _VirtualScroll3.default;
-},{"./VirtualScroll":41}],43:[function(require,module,exports){
+},{"./VirtualScroll":44}],46:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4601,7 +4680,7 @@ Object.defineProperty(exports, 'VirtualScroll', {
     return _VirtualScroll.VirtualScroll;
   }
 });
-},{"./ArrowKeyStepper":24,"./AutoSizer":26,"./ColumnSizer":28,"./FlexTable":33,"./Grid":36,"./InfiniteLoader":38,"./ScrollSync":40,"./VirtualScroll":42}],44:[function(require,module,exports){
+},{"./ArrowKeyStepper":27,"./AutoSizer":29,"./ColumnSizer":31,"./FlexTable":36,"./Grid":39,"./InfiniteLoader":41,"./ScrollSync":43,"./VirtualScroll":45}],47:[function(require,module,exports){
 'use strict';
 
 /**
@@ -4764,10 +4843,10 @@ module.exports = {
   addResizeListener: addResizeListener,
   removeResizeListener: removeResizeListener
 };
-},{}],45:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict';
 module.exports = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
-},{}],46:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 var canUseDOM = require('./inDOM');
@@ -4793,7 +4872,7 @@ module.exports = function (recalc) {
 
   return size;
 };
-},{"./inDOM":45}],47:[function(require,module,exports){
+},{"./inDOM":48}],50:[function(require,module,exports){
 (function (global){
 var now = require('performance-now')
   , root = typeof window === 'undefined' ? global : window
@@ -4869,7 +4948,7 @@ module.exports.polyfill = function() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"performance-now":48}],48:[function(require,module,exports){
+},{"performance-now":51}],51:[function(require,module,exports){
 (function (process){
 // Generated by CoffeeScript 1.7.1
 (function() {
@@ -4905,9 +4984,9 @@ module.exports.polyfill = function() {
 }).call(this);
 
 }).call(this,require('_process'))
-},{"_process":13}],49:[function(require,module,exports){
+},{"_process":13}],52:[function(require,module,exports){
 module.exports = require('react/lib/shallowCompare');
-},{"react/lib/shallowCompare":50}],50:[function(require,module,exports){
+},{"react/lib/shallowCompare":53}],53:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4932,7 +5011,7 @@ function shallowCompare(instance, nextProps, nextState) {
 }
 
 module.exports = shallowCompare;
-},{"fbjs/lib/shallowEqual":51}],51:[function(require,module,exports){
+},{"fbjs/lib/shallowEqual":54}],54:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.

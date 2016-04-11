@@ -63,7 +63,7 @@ var Async = _react2['default'].createClass({
 		loadOptions: _react2['default'].PropTypes.func.isRequired, // function to call to load options asynchronously
 		loadingPlaceholder: _react2['default'].PropTypes.string, // replaces the placeholder while options are loading
 		minimumInput: _react2['default'].PropTypes.number, // the minimum number of characters that trigger loadOptions
-		noResultsText: _react2['default'].PropTypes.string, // placeholder displayed when there are no matching search results (shared with Select)
+		noResultsText: stringOrNode, // placeholder displayed when there are no matching search results (shared with Select)
 		placeholder: stringOrNode, // field placeholder, displayed when there's no value (shared with Select)
 		searchPromptText: _react2['default'].PropTypes.string, // label to prompt for search input
 		searchingText: _react2['default'].PropTypes.string },
@@ -260,6 +260,8 @@ var Option = _react2['default'].createClass({
 			'div',
 			{ className: className,
 				style: option.style,
+				role: 'option',
+				'aria-selected': this.props.isSelected,
 				onMouseDown: this.handleMouseDown,
 				onMouseEnter: this.handleMouseEnter,
 				onMouseMove: this.handleMouseMove,
@@ -443,6 +445,17 @@ function stringifyValue(value) {
 	}
 }
 
+var lastId = 0;
+
+function uniqueId(prefix) {
+	lastId++;
+	if (prefix) {
+		return prefix + "_" + lastId;
+	} else {
+		return lastId.toString();
+	}
+}
+
 var stringOrNode = _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]);
 
 var Select = _react2['default'].createClass({
@@ -452,6 +465,8 @@ var Select = _react2['default'].createClass({
 	propTypes: {
 		addLabelText: _react2['default'].PropTypes.string, // placeholder displayed when you want to add a label on a multi-value input
 		allowCreate: _react2['default'].PropTypes.bool, // whether to allow creation of new entries
+		ariaOpenListText: _react2['default'].PropTypes.string, // aria-label applied to the open list arrow
+		ariaRequired: _react2['default'].PropTypes.bool, // value of aria-required property on input
 		autoBlur: _react2['default'].PropTypes.bool,
 		autofocus: _react2['default'].PropTypes.bool, // autofocus the component on mount
 		autosize: _react2['default'].PropTypes.bool, // whether to enable autosizing or not
@@ -502,6 +517,7 @@ var Select = _react2['default'].createClass({
 		simpleValue: _react2['default'].PropTypes.bool, // pass the value to onChange as a simple value (legacy pre 1.0 mode), defaults to false
 		style: _react2['default'].PropTypes.object, // optional style to apply to the control
 		tabIndex: _react2['default'].PropTypes.string, // optional tab index of the control
+		tabSelectsValue: _react2['default'].PropTypes.bool, // whether to treat tabbing out while focused to be value selection
 		value: _react2['default'].PropTypes.any, // initial field value
 		valueComponent: _react2['default'].PropTypes.func, // value component to render
 		valueKey: _react2['default'].PropTypes.string, // path of the label value in option objects
@@ -514,8 +530,9 @@ var Select = _react2['default'].createClass({
 	getDefaultProps: function getDefaultProps() {
 		return {
 			addLabelText: 'Add "{label}"?',
-			autosize: true,
 			allowCreate: false,
+			ariaOpenListText: 'Open list',
+			autosize: true,
 			backspaceRemoves: true,
 			clearable: true,
 			clearAllText: 'Clear all',
@@ -543,6 +560,7 @@ var Select = _react2['default'].createClass({
 			scrollMenuIntoView: true,
 			searchable: true,
 			simpleValue: false,
+			tabSelectsValue: true,
 			valueComponent: _Value2['default'],
 			valueKey: 'value'
 		};
@@ -781,7 +799,7 @@ var Select = _react2['default'].createClass({
 				return;
 			case 9:
 				// tab
-				if (event.shiftKey || !this.state.isOpen) {
+				if (event.shiftKey || !this.state.isOpen || !this.props.tabSelectsValue) {
 					return;
 				}
 				this.selectFocusedOption();
@@ -1054,7 +1072,7 @@ var Select = _react2['default'].createClass({
 		}
 	},
 
-	renderInput: function renderInput(valueArray) {
+	renderInput: function renderInput(valueArray, descriptionUniqueId, listUniqueId) {
 		var className = (0, _classnames2['default'])('Select-input', this.props.inputProps.className);
 		if (this.props.disabled || !this.props.searchable) {
 			return _react2['default'].createElement('div', _extends({}, this.props.inputProps, {
@@ -1075,7 +1093,11 @@ var Select = _react2['default'].createClass({
 				minWidth: '5',
 				ref: 'input',
 				required: this.state.required,
-				value: this.state.inputValue
+				value: this.state.inputValue,
+				role: 'combobox',
+				'aria-autocomplete': 'inline',
+				'aria-describedby': descriptionUniqueId,
+				'aria-required': this.props.ariaRequired
 			}));
 		}
 		return _react2['default'].createElement(
@@ -1088,7 +1110,11 @@ var Select = _react2['default'].createClass({
 				onFocus: this.handleInputFocus,
 				ref: 'input',
 				required: this.state.required,
-				value: this.state.inputValue
+				value: this.state.inputValue,
+				role: 'combobox',
+				'aria-autocomplete': 'inline',
+				'aria-describedby': descriptionUniqueId,
+				'aria-required': this.props.ariaRequired
 			}))
 		);
 	},
@@ -1099,6 +1125,7 @@ var Select = _react2['default'].createClass({
 			'span',
 			{ className: 'Select-clear-zone', title: this.props.multi ? this.props.clearAllText : this.props.clearValueText,
 				'aria-label': this.props.multi ? this.props.clearAllText : this.props.clearValueText,
+				role: 'button',
 				onMouseDown: this.clearValue,
 				onTouchStart: this.handleTouchStart,
 				onTouchMove: this.handleTouchMove,
@@ -1110,7 +1137,7 @@ var Select = _react2['default'].createClass({
 	renderArrow: function renderArrow() {
 		return _react2['default'].createElement(
 			'span',
-			{ className: 'Select-arrow-zone', onMouseDown: this.handleMouseDownOnArrow },
+			{ 'aria-label': this.props.ariaOpenListText, role: 'button', className: 'Select-arrow-zone', onMouseDown: this.handleMouseDownOnArrow },
 			_react2['default'].createElement('span', { className: 'Select-arrow', onMouseDown: this.handleMouseDownOnArrow })
 		);
 	},
@@ -1250,6 +1277,61 @@ var Select = _react2['default'].createClass({
 		}
 	},
 
+	renderOuter: function renderOuter(options, valueArray, focusedOption, listUniqueId) {
+		var menu = this.renderMenu(options, valueArray, focusedOption);
+		if (!menu) {
+			return null;
+		}
+
+		return _react2['default'].createElement(
+			'div',
+			{ ref: 'menuContainer', className: 'Select-menu-outer', style: this.props.menuContainerStyle },
+			_react2['default'].createElement(
+				'div',
+				{ ref: 'menu', className: 'Select-menu',
+					role: 'listbox',
+					id: listUniqueId,
+					style: this.props.menuStyle,
+					onScroll: this.handleMenuScroll,
+					onMouseDown: this.handleMouseDownOnMenu },
+				menu
+			)
+		);
+	},
+
+	renderInputDescription: function renderInputDescription(valueArray, descriptionUniqueId) {
+		var _this6 = this;
+
+		if (this.state.focusedOption && this.state.isOpen) {
+			return _react2['default'].createElement(
+				'div',
+				{ className: 'Select-sr-only', 'aria-hidden': 'true', id: descriptionUniqueId },
+				'Selected option: ',
+				this.getOptionLabel(this.state.focusedOption)
+			);
+		} else {
+			var _ret2 = (function () {
+				var renderLabel = _this6.props.valueRenderer || _this6.getOptionLabel;
+				return {
+					v: _react2['default'].createElement(
+						'div',
+						{ className: 'Select-sr-only', 'aria-hidden': 'true', id: descriptionUniqueId },
+						valueArray.length ? _react2['default'].createElement(
+							'span',
+							null,
+							'Current value: ',
+							valueArray.map(function (v) {
+								return renderLabel(v);
+							})
+						) : _this6.props.placeholder
+					)
+				};
+			})();
+
+			if (typeof _ret2 === 'object') return _ret2.v;
+		}
+	},
+
 	render: function render() {
 		var valueArray = this.getValueArray();
 		var options = this._visibleOptions = this.filterOptions(this.props.multi ? valueArray : null);
@@ -1266,10 +1348,15 @@ var Select = _react2['default'].createClass({
 			'is-searchable': this.props.searchable,
 			'has-value': valueArray.length
 		});
+
+		var descriptionUniqueId = uniqueId("Select_input_description");
+		var listUniqueId = uniqueId("Select_listbox");
+
 		return _react2['default'].createElement(
 			'div',
 			{ ref: 'wrapper', className: className, style: this.props.wrapperStyle },
 			this.renderHiddenField(valueArray),
+			this.renderInputDescription(valueArray, descriptionUniqueId),
 			_react2['default'].createElement(
 				'div',
 				{ ref: 'control',
@@ -1281,23 +1368,12 @@ var Select = _react2['default'].createClass({
 					onTouchStart: this.handleTouchStart,
 					onTouchMove: this.handleTouchMove },
 				this.renderValue(valueArray, isOpen),
-				this.renderInput(valueArray),
+				this.renderInput(valueArray, descriptionUniqueId, listUniqueId),
 				this.renderLoading(),
 				this.renderClear(),
 				this.renderArrow()
 			),
-			isOpen ? _react2['default'].createElement(
-				'div',
-				{ ref: 'menuContainer', className: 'Select-menu-outer', style: this.props.menuContainerStyle },
-				_react2['default'].createElement(
-					'div',
-					{ ref: 'menu', className: 'Select-menu',
-						style: this.props.menuStyle,
-						onScroll: this.handleMenuScroll,
-						onMouseDown: this.handleMouseDownOnMenu },
-					this.renderMenu(options, !this.props.multi ? valueArray : null, focusedOption)
-				)
-			) : null
+			isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption, listUniqueId) : null
 		);
 	}
 
