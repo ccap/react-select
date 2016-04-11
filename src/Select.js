@@ -17,6 +17,17 @@ function stringifyValue (value) {
 	}
 }
 
+let lastId = 0;
+
+function uniqueId(prefix) {
+	lastId++;
+	if (prefix) {
+		return prefix + "_" + lastId;
+	} else {
+		return lastId.toString();
+	}
+}
+
 const stringOrNode = React.PropTypes.oneOfType([
 	React.PropTypes.string,
 	React.PropTypes.node
@@ -29,7 +40,9 @@ const Select = React.createClass({
 	propTypes: {
 		addLabelText: React.PropTypes.string,       // placeholder displayed when you want to add a label on a multi-value input
 		allowCreate: React.PropTypes.bool,          // whether to allow creation of new entries
-		autoBlur: React.PropTypes.bool,             // automatically blur the component when an option is selected
+		ariaOpenListText: React.PropTypes.string,		// aria-label applied to the open list arrow
+		ariaRequired: React.PropTypes.bool,					// value of aria-required property on input
+		autoBlur: React.PropTypes.bool,
 		autofocus: React.PropTypes.bool,            // autofocus the component on mount
 		autosize: React.PropTypes.bool,             // whether to enable autosizing or not
 		backspaceRemoves: React.PropTypes.bool,     // whether backspace removes an item if there is no text input
@@ -95,8 +108,9 @@ const Select = React.createClass({
 	getDefaultProps () {
 		return {
 			addLabelText: 'Add "{label}"?',
-			autosize: true,
 			allowCreate: false,
+			ariaOpenListText: 'Open list',
+			autosize: true,
 			backspaceRemoves: true,
 			clearable: true,
 			clearAllText: 'Clear all',
@@ -627,7 +641,7 @@ const Select = React.createClass({
 		}
 	},
 
-	renderInput (valueArray) {
+	renderInput (valueArray, descriptionUniqueId, listUniqueId) {
 		if (this.props.inputRenderer) {
 			return this.props.inputRenderer();
 		} else {
@@ -657,6 +671,10 @@ const Select = React.createClass({
 						ref="input"
 						required={this.state.required}
 						value={this.state.inputValue}
+						role="combobox"
+						aria-autocomplete="inline"
+						aria-describedby={descriptionUniqueId}
+						aria-required={this.props.ariaRequired}
 					/>
 				);
 			}
@@ -671,6 +689,10 @@ const Select = React.createClass({
 						ref="input"
 						required={this.state.required}
 						value={this.state.inputValue}
+						role="combobox"
+						aria-autocomplete="inline"
+						aria-describedby={descriptionUniqueId}
+						aria-required={this.props.ariaRequired}
 					/>
 				</div>
 			);
@@ -682,6 +704,7 @@ const Select = React.createClass({
 		return (
 			<span className="Select-clear-zone" title={this.props.multi ? this.props.clearAllText : this.props.clearValueText}
 						aria-label={this.props.multi ? this.props.clearAllText : this.props.clearValueText}
+						role="button"
 						onMouseDown={this.clearValue}
 						onTouchStart={this.handleTouchStart}
 						onTouchMove={this.handleTouchMove}
@@ -693,7 +716,7 @@ const Select = React.createClass({
 
 	renderArrow () {
 		return (
-			<span className="Select-arrow-zone" onMouseDown={this.handleMouseDownOnArrow}>
+			<span aria-label={this.props.ariaOpenListText} role="button" className="Select-arrow-zone" onMouseDown={this.handleMouseDownOnArrow}>
 				<span className="Select-arrow" onMouseDown={this.handleMouseDownOnArrow} />
 			</span>
 		);
@@ -826,7 +849,7 @@ const Select = React.createClass({
 		}
 	},
 
-	renderOuter (options, valueArray, focusedOption) {
+	renderOuter (options, valueArray, focusedOption, listUniqueId) {
 		let menu = this.renderMenu(options, valueArray, focusedOption);
 		if (!menu) {
 			return null;
@@ -835,6 +858,8 @@ const Select = React.createClass({
 		return (
 			<div ref="menuContainer" className="Select-menu-outer" style={this.props.menuContainerStyle}>
 				<div ref="menu" className="Select-menu"
+						 role="listbox"
+						 id={listUniqueId}
 						 style={this.props.menuStyle}
 						 onScroll={this.handleMenuScroll}
 						 onMouseDown={this.handleMouseDownOnMenu}>
@@ -842,6 +867,22 @@ const Select = React.createClass({
 				</div>
 			</div>
 		);
+	},
+
+	renderInputDescription (valueArray, descriptionUniqueId) {
+		if (this.state.focusedOption && this.state.isOpen) {
+			return <div className="Select-sr-only" aria-hidden="true" id={descriptionUniqueId}>
+				Selected option: {this.getOptionLabel(this.state.focusedOption)}
+			</div>;
+		} else {
+			const renderLabel = this.props.valueRenderer || this.getOptionLabel;
+			return <div className="Select-sr-only" aria-hidden="true" id={descriptionUniqueId}>
+				{ valueArray.length ?
+					<span>Current value: {valueArray.map(v => renderLabel(v))}</span> :
+					this.props.placeholder
+				}
+			</div>;
+		}
 	},
 
 	render () {
@@ -862,9 +903,13 @@ const Select = React.createClass({
 			'has-value': valueArray.length,
 		});
 
+		const descriptionUniqueId = uniqueId("Select_input_description");
+		const listUniqueId = uniqueId("Select_listbox");
+
 		return (
 			<div ref="wrapper" className={className} style={this.props.wrapperStyle}>
 				{this.renderHiddenField(valueArray)}
+				{this.renderInputDescription(valueArray, descriptionUniqueId)}
 				<div ref="control"
 						 className="Select-control"
 						 style={this.props.style}
@@ -874,12 +919,12 @@ const Select = React.createClass({
 						 onTouchStart={this.handleTouchStart}
 						 onTouchMove={this.handleTouchMove}>
 					{this.renderValue(valueArray, isOpen)}
-					{this.renderInput(valueArray)}
+					{this.renderInput(valueArray, descriptionUniqueId, listUniqueId)}
 					{this.renderLoading()}
 					{this.renderClear()}
 					{this.renderArrow()}
 				</div>
-				{isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption) : null}
+				{isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption, listUniqueId) : null}
 			</div>
 		);
 	}
