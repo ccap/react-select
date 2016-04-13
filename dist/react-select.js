@@ -464,6 +464,11 @@ var Select = _react2['default'].createClass({
 		};
 	},
 
+	componentWillMount: function componentWillMount() {
+		this.descriptionUniqueId = uniqueId("Select_input_description");
+		this.listUniqueId = uniqueId("Select_listbox");
+	},
+
 	componentDidMount: function componentDidMount() {
 		if (this.props.autofocus) {
 			this.focus();
@@ -959,7 +964,7 @@ var Select = _react2['default'].createClass({
 		}
 	},
 
-	renderInput: function renderInput(valueArray, descriptionUniqueId, listUniqueId) {
+	renderInput: function renderInput(valueArray) {
 		var className = (0, _classnames2['default'])('Select-input', this.props.inputProps.className);
 		if (this.props.disabled || !this.props.searchable) {
 			return _react2['default'].createElement('div', _extends({}, this.props.inputProps, {
@@ -983,7 +988,7 @@ var Select = _react2['default'].createClass({
 				value: this.state.inputValue,
 				role: 'combobox',
 				'aria-autocomplete': 'inline',
-				'aria-describedby': descriptionUniqueId,
+				'aria-describedby': this.descriptionUniqueId,
 				'aria-required': this.props.ariaRequired
 			}));
 		}
@@ -1000,7 +1005,7 @@ var Select = _react2['default'].createClass({
 				value: this.state.inputValue,
 				role: 'combobox',
 				'aria-autocomplete': 'inline',
-				'aria-describedby': descriptionUniqueId,
+				'aria-describedby': this.descriptionUniqueId,
 				'aria-required': this.props.ariaRequired
 			}))
 		);
@@ -1164,7 +1169,7 @@ var Select = _react2['default'].createClass({
 		}
 	},
 
-	renderOuter: function renderOuter(options, valueArray, focusedOption, listUniqueId) {
+	renderOuter: function renderOuter(options, valueArray, focusedOption) {
 		var menu = this.renderMenu(options, valueArray, focusedOption);
 		if (!menu) {
 			return null;
@@ -1177,7 +1182,7 @@ var Select = _react2['default'].createClass({
 				'div',
 				{ ref: 'menu', className: 'Select-menu',
 					role: 'listbox',
-					id: listUniqueId,
+					id: this.listUniqueId,
 					style: this.props.menuStyle,
 					onScroll: this.handleMenuScroll,
 					onMouseDown: this.handleMouseDownOnMenu },
@@ -1186,13 +1191,13 @@ var Select = _react2['default'].createClass({
 		);
 	},
 
-	renderInputDescription: function renderInputDescription(valueArray, descriptionUniqueId) {
+	renderInputDescription: function renderInputDescription(valueArray) {
 		var _this6 = this;
 
 		if (this.state.focusedOption && this.state.isOpen) {
 			return _react2['default'].createElement(
 				'div',
-				{ className: 'Select-sr-only', 'aria-hidden': 'true', id: descriptionUniqueId },
+				{ className: 'Select-sr-only', 'aria-hidden': 'true', id: this.descriptionUniqueId },
 				'Selected option: ',
 				this.getOptionLabel(this.state.focusedOption)
 			);
@@ -1202,7 +1207,7 @@ var Select = _react2['default'].createClass({
 				return {
 					v: _react2['default'].createElement(
 						'div',
-						{ className: 'Select-sr-only', 'aria-hidden': 'true', id: descriptionUniqueId },
+						{ className: 'Select-sr-only', 'aria-hidden': 'true', id: _this6.descriptionUniqueId },
 						valueArray.length ? _react2['default'].createElement(
 							'span',
 							null,
@@ -1236,14 +1241,11 @@ var Select = _react2['default'].createClass({
 			'has-value': valueArray.length
 		});
 
-		var descriptionUniqueId = uniqueId("Select_input_description");
-		var listUniqueId = uniqueId("Select_listbox");
-
 		return _react2['default'].createElement(
 			'div',
 			{ ref: 'wrapper', className: className, style: this.props.wrapperStyle },
 			this.renderHiddenField(valueArray),
-			this.renderInputDescription(valueArray, descriptionUniqueId),
+			this.renderInputDescription(valueArray),
 			_react2['default'].createElement(
 				'div',
 				{ ref: 'control',
@@ -1255,12 +1257,12 @@ var Select = _react2['default'].createClass({
 					onTouchStart: this.handleTouchStart,
 					onTouchMove: this.handleTouchMove },
 				this.renderValue(valueArray, isOpen),
-				this.renderInput(valueArray, descriptionUniqueId, listUniqueId),
+				this.renderInput(valueArray),
 				this.renderLoading(),
 				this.renderClear(),
 				this.renderArrow()
 			),
-			isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption, listUniqueId) : null
+			isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption) : null
 		);
 	}
 
