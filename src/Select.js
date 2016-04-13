@@ -164,6 +164,9 @@ const Select = React.createClass({
 				required: this.handleRequired(valueArray[0], this.props.multi),
 			});
 		}
+
+		this.descriptionUniqueId = uniqueId("Select_input_description");
+		this.listUniqueId = uniqueId("Select_listbox");
 	},
 
 	componentDidMount () {
@@ -641,7 +644,7 @@ const Select = React.createClass({
 		}
 	},
 
-	renderInput (valueArray, descriptionUniqueId, listUniqueId) {
+	renderInput (valueArray) {
 		if (this.props.inputRenderer) {
 			return this.props.inputRenderer();
 		} else {
@@ -673,7 +676,7 @@ const Select = React.createClass({
 						value={this.state.inputValue}
 						role="combobox"
 						aria-autocomplete="inline"
-						aria-describedby={descriptionUniqueId}
+						aria-describedby={this.descriptionUniqueId}
 						aria-required={this.props.ariaRequired}
 					/>
 				);
@@ -691,7 +694,7 @@ const Select = React.createClass({
 						value={this.state.inputValue}
 						role="combobox"
 						aria-autocomplete="inline"
-						aria-describedby={descriptionUniqueId}
+						aria-describedby={this.descriptionUniqueId}
 						aria-required={this.props.ariaRequired}
 					/>
 				</div>
@@ -849,7 +852,7 @@ const Select = React.createClass({
 		}
 	},
 
-	renderOuter (options, valueArray, focusedOption, listUniqueId) {
+	renderOuter (options, valueArray, focusedOption) {
 		let menu = this.renderMenu(options, valueArray, focusedOption);
 		if (!menu) {
 			return null;
@@ -859,7 +862,7 @@ const Select = React.createClass({
 			<div ref="menuContainer" className="Select-menu-outer" style={this.props.menuContainerStyle}>
 				<div ref="menu" className="Select-menu"
 						 role="listbox"
-						 id={listUniqueId}
+						 id={this.listUniqueId}
 						 style={this.props.menuStyle}
 						 onScroll={this.handleMenuScroll}
 						 onMouseDown={this.handleMouseDownOnMenu}>
@@ -869,14 +872,14 @@ const Select = React.createClass({
 		);
 	},
 
-	renderInputDescription (valueArray, descriptionUniqueId) {
+	renderInputDescription (valueArray) {
 		if (this.state.focusedOption && this.state.isOpen) {
-			return <div className="Select-sr-only" aria-hidden="true" id={descriptionUniqueId}>
+			return <div className="Select-sr-only" aria-hidden="true" id={this.descriptionUniqueId}>
 				Selected option: {this.getOptionLabel(this.state.focusedOption)}
 			</div>;
 		} else {
 			const renderLabel = this.props.valueRenderer || this.getOptionLabel;
-			return <div className="Select-sr-only" aria-hidden="true" id={descriptionUniqueId}>
+			return <div className="Select-sr-only" aria-hidden="true" id={this.descriptionUniqueId}>
 				{ valueArray.length ?
 					<span>Current value: {valueArray.map(v => renderLabel(v))}</span> :
 					this.props.placeholder
@@ -903,13 +906,10 @@ const Select = React.createClass({
 			'has-value': valueArray.length,
 		});
 
-		const descriptionUniqueId = uniqueId("Select_input_description");
-		const listUniqueId = uniqueId("Select_listbox");
-
 		return (
 			<div ref="wrapper" className={className} style={this.props.wrapperStyle}>
 				{this.renderHiddenField(valueArray)}
-				{this.renderInputDescription(valueArray, descriptionUniqueId)}
+				{this.renderInputDescription(valueArray)}
 				<div ref="control"
 						 className="Select-control"
 						 style={this.props.style}
@@ -919,12 +919,12 @@ const Select = React.createClass({
 						 onTouchStart={this.handleTouchStart}
 						 onTouchMove={this.handleTouchMove}>
 					{this.renderValue(valueArray, isOpen)}
-					{this.renderInput(valueArray, descriptionUniqueId, listUniqueId)}
+					{this.renderInput(valueArray)}
 					{this.renderLoading()}
 					{this.renderClear()}
 					{this.renderArrow()}
 				</div>
-				{isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption, listUniqueId) : null}
+				{isOpen ? this.renderOuter(options, !this.props.multi ? valueArray : null, focusedOption) : null}
 			</div>
 		);
 	}
