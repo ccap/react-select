@@ -41,6 +41,7 @@ const Select = React.createClass({
 		addLabelText: React.PropTypes.string,       // placeholder displayed when you want to add a label on a multi-value input
 		allowCreate: React.PropTypes.bool,          // whether to allow creation of new entries
 		ariaOpenListText: React.PropTypes.string,		// aria-label applied to the open list arrow
+		ariaDescribedBy: React.PropTypes.string,		// aria-describedby property on input
 		ariaRequired: React.PropTypes.bool,					// value of aria-required property on input
 		autoBlur: React.PropTypes.bool,
 		autofocus: React.PropTypes.bool,            // autofocus the component on mount
@@ -626,6 +627,7 @@ const Select = React.createClass({
 	},
 
 	renderInput (valueArray) {
+		var ariaDescribedBy = this.props.ariaDescribedBy || '';
 		var className = classNames('Select-input', this.props.inputProps.className);
 		if (this.props.disabled || !this.props.searchable) {
 			return (
@@ -654,7 +656,7 @@ const Select = React.createClass({
 					value={this.state.inputValue}
 					role="combobox"
 					aria-autocomplete="inline"
-					aria-describedby={this.descriptionUniqueId}
+					aria-describedby={`${this.descriptionUniqueId} ${ariaDescribedBy}`}
 					aria-required={this.props.ariaRequired}
 				/>
 			);
@@ -672,7 +674,7 @@ const Select = React.createClass({
 					value={this.state.inputValue}
 					role="combobox"
 					aria-autocomplete="inline"
-					aria-describedby={this.descriptionUniqueId}
+					aria-describedby={`${this.descriptionUniqueId} ${ariaDescribedBy}`}
 					aria-required={this.props.ariaRequired}
 				/>
 			</div>
@@ -851,7 +853,7 @@ const Select = React.createClass({
 
 	renderInputDescription (valueArray) {
 		if (this.state.focusedOption && this.state.isOpen) {
-			return <div className="Select-sr-only" aria-hidden="true" id={this.descriptionUniqueId}>
+			return <div className="Select-sr-only" aria-hidden="true" aria-live="polite" id={this.descriptionUniqueId}>
 				Selected option: {this.getOptionLabel(this.state.focusedOption)}
 			</div>;
 		} else {
