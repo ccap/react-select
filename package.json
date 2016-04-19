@@ -26,22 +26,22 @@
     "jsdom": "^7.2.2",
     "mocha": "^2.3.4",
     "node-sass": "^3.4.2",
-    "react": "^0.14",
-    "react-addons-test-utils": "^0.14",
+    "react": "^0.14 || ^15.0.0",
+    "react-addons-test-utils": "^0.14 || ^15.0.0",
     "react-component-gulp-tasks": "^0.7.7",
-    "react-dom": "^0.14",
+    "react-dom": "^0.14 || ^15.0.0",
     "react-gravatar": "^2.3.0",
-    "react-virtualized": "6.0.4",
-    "react-virtualized-select": "^0.0.2",
+    "react-virtualized": "6.2.0",
+    "react-virtualized-select": "^0.0.4",
     "sinon": "^1.17.2",
     "unexpected": "^10.7.0",
     "unexpected-dom": "^3.0.2",
-    "unexpected-react": "^0.5.1",
+    "unexpected-react": "^3.1.2",
     "unexpected-sinon": "^9.0.4"
   },
   "peerDependencies": {
-    "react": "^0.14",
-    "react-dom": "^0.14"
+    "react": "^0.14 || ^15.0.0",
+    "react-dom": "^0.14 || ^15.0.0"
   },
   "browserify-shim": {
     "classnames": "global:classNames",
