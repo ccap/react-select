@@ -731,9 +731,14 @@ const Select = React.createClass({
 				'aria-expanded': '' + isOpen,
 			    'aria-owns': ariaOwns,
 			    'aria-haspopup': '' + isOpen,
-				'aria-activedescendant': isOpen ? this._instancePrefix + '-option-' + focusedOptionIndex : this._instancePrefix + '-value',
+				'aria-activedescendant': isOpen ? this._instancePrefix + '-option-' + focusedOptionIndex : null,
 				'aria-labelledby': this.props['aria-labelledby'],
 				'aria-label': this.props['aria-label'],
+				'aria-describedby': isOpen
+					? null
+					: this.props.multi
+						? valueArray.map((value, i) => this._instancePrefix + '-value-' + i).join(' ')
+						: this._instancePrefix + '-value-item',
 				className: className,
 				tabIndex: this.props.tabIndex,
 				onBlur: this.handleInputBlur,
