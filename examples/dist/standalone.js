@@ -394,6 +394,7 @@ var Select = _react2['default'].createClass({
 		menuRenderer: _react2['default'].PropTypes.func, // renders a custom menu with options
 		menuStyle: _react2['default'].PropTypes.object, // optional style to apply to the menu
 		multi: _react2['default'].PropTypes.bool, // multi-value input
+		multiCloseOnSelect: _react2['default'].PropTypes.bool, // multi-value input should close after a value is selected
 		name: _react2['default'].PropTypes.string, // generates a hidden <input /> tag with this field name for html forms
 		newOptionCreator: _react2['default'].PropTypes.func, // factory to create new options when allowCreate set
 		noResultsText: stringOrNode, // placeholder displayed when there are no matching search results
@@ -455,6 +456,7 @@ var Select = _react2['default'].createClass({
 			matchProp: 'any',
 			menuBuffer: 0,
 			multi: false,
+			multiCloseOnSelect: false,
 			noResultsText: 'No results found',
 			onBlurResetsInput: true,
 			openAfterFocus: false,
@@ -871,7 +873,8 @@ var Select = _react2['default'].createClass({
 			this.addValue(value);
 			this.setState({
 				inputValue: '',
-				focusedIndex: null
+				focusedIndex: null,
+				isOpen: !multiCloseOnSelect
 			});
 		} else {
 			this.setState({
