@@ -1118,7 +1118,6 @@ var Select$1 = function (_React$Component) {
 					if (event.shiftKey || !this.state.isOpen || !this.props.tabSelectsValue) {
 						break;
 					}
-					event.preventDefault();
 					this.selectFocusedOption();
 					break;
 				case 13:
