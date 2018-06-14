@@ -535,6 +535,7 @@ var Value = function (_React$Component) {
 		var _this = possibleConstructorReturn(this, (Value.__proto__ || Object.getPrototypeOf(Value)).call(this, props));
 
 		_this.handleMouseDown = _this.handleMouseDown.bind(_this);
+		_this.onKeyDown = _this.onKeyDown.bind(_this);
 		_this.onRemove = _this.onRemove.bind(_this);
 		_this.handleTouchEndRemove = _this.handleTouchEndRemove.bind(_this);
 		_this.handleTouchMove = _this.handleTouchMove.bind(_this);
@@ -555,6 +556,15 @@ var Value = function (_React$Component) {
 			}
 			if (this.props.value.href) {
 				event.stopPropagation();
+			}
+		}
+	}, {
+		key: 'onKeyDown',
+		value: function onKeyDown(event) {
+			if (event.keyCode === 13 || event.keyCode === 32) {
+				event.preventDefault();
+				event.stopPropagation();
+				this.onRemove(event);
 			}
 		}
 	}, {
@@ -593,8 +603,10 @@ var Value = function (_React$Component) {
 			return React__default.createElement(
 				'span',
 				{ className: 'Select-value-icon',
+					tabIndex: '0',
 					'aria-hidden': 'true',
 					onMouseDown: this.onRemove,
+					onKeyDown: this.onKeyDown,
 					onTouchEnd: this.handleTouchEndRemove,
 					onTouchStart: this.handleTouchStart,
 					onTouchMove: this.handleTouchMove },
