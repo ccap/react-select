@@ -68,6 +68,7 @@ class Value extends React.Component {
 			<span className="Select-value-icon"
 				tabIndex="0"
 				aria-hidden="true"
+				aria-label=","
 				onMouseDown={this.onRemove}
 				onKeyDown={this.onKeyDown}
 				onTouchEnd={this.handleTouchEndRemove}

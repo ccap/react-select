@@ -941,7 +941,8 @@ class Select extends React.Component {
 
 		return (
 			<span
-				aria-label={ariaLabel}
+			  aria-hidden="true"
+			  aria-label=","
 				className="Select-clear-zone"
 				onMouseDown={this.clearValue}
 				onTouchEnd={this.handleTouchEndClearValue}
