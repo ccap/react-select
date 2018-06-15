@@ -18,8 +18,10 @@ arrowRenderer.propTypes = {
 };
 
 var clearRenderer = function clearRenderer() {
-	return React.createElement('span', {
-		className: 'Select-clear',
+	return React.createElement("span", {
+		className: "Select-clear",
+		"aria-hidden": "true",
+		"aria-label": ",",
 		dangerouslySetInnerHTML: { __html: '&times;' }
 	});
 };
@@ -600,6 +602,7 @@ var Value = function (_React$Component) {
 				{ className: 'Select-value-icon',
 					tabIndex: '0',
 					'aria-hidden': 'true',
+					'aria-label': ',',
 					onMouseDown: this.onRemove,
 					onKeyDown: this.onKeyDown,
 					onTouchEnd: this.handleTouchEndRemove,
@@ -1651,7 +1654,8 @@ var Select$1 = function (_React$Component) {
 			return React.createElement(
 				'span',
 				{
-					'aria-label': ariaLabel,
+					'aria-hidden': 'true',
+					'aria-label': ',',
 					className: 'Select-clear-zone',
 					onMouseDown: this.clearValue,
 					onTouchEnd: this.handleTouchEndClearValue,
