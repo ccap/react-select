@@ -1,3 +1,4 @@
+@use "sass:color";
 //
 // Select Menu
 // ------------------------------
@@ -13,7 +14,7 @@
 	@include border-bottom-radius( $select-input-border-radius );
 	background-color: $select-input-bg;
 	border: 1px solid $select-input-border-color;
-	border-top-color: mix($select-input-bg, $select-input-border-color, 50%);
+	border-top-color: color.mix($select-input-bg, $select-input-border-color, 50%);
 	box-shadow: $select-menu-box-shadow;
 	box-sizing: border-box;
 	margin-top: -1px;
