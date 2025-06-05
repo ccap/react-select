@@ -1,3 +1,5 @@
+@use "sass:color";
+@use "sass:math";
 /**
  * React Select
  * ============
@@ -33,21 +35,21 @@ $select-menu-zindex:                1000 !default;
 $select-menu-max-height:            200px !default;
 $select-menu-box-shadow:            $select-input-hover-box-shadow !default;
 
-$select-option-color:               lighten($select-text-color, 20%) !default;
+$select-option-color:               color.adjust($select-text-color, $lightness: 20%) !default;
 $select-option-bg:                  $select-input-bg !default;
 $select-option-focused-color:       $select-text-color !default;
 $select-option-focused-bg:          #f2f9fc !default; // pale blue
 $select-option-selected-color:      $select-text-color !default;
 $select-option-selected-bg:         #f5faff !default; // lightest blue
-$select-option-disabled-color:      lighten($select-text-color, 60%) !default;
+$select-option-disabled-color:      color.adjust($select-text-color, $lightness: 60%) !default;
 
-$select-noresults-color:            lighten($select-text-color, 40%) !default;
+$select-noresults-color:            color.adjust($select-text-color, $lightness: 40%) !default;
 
 // clear "x" button
-$select-clear-size:                 floor(($select-input-height / 2)) !default;
+$select-clear-size:                 math.floor(($select-input-height * 0.5)) !default;
 $select-clear-color:                #999 !default;
 $select-clear-hover-color:          #D0021B !default; // red
-$select-clear-width:                ($select-input-internal-height / 2) !default;
+$select-clear-width:                ($select-input-internal-height * 0.5) !default;
 
 // arrow indicator
 $select-arrow-color:                #999 !default;
@@ -67,9 +69,9 @@ $select-item-padding-horizontal:    5px !default;
 $select-item-font-size:             .9em !default;
 $select-item-color:                 #08c !default; // pale blue
 $select-item-bg:                    #f2f9fc !default;
-$select-item-border-color:          darken($select-item-bg, 10%) !default;
-$select-item-hover-color:           darken($select-item-color, 5%) !default; // pale blue
-$select-item-hover-bg:              darken($select-item-bg, 5%) !default;
+$select-item-border-color:          color.adjust($select-item-bg, $lightness: -10%) !default;
+$select-item-hover-color:           color.adjust($select-item-color, $lightness: -5%) !default; // pale blue
+$select-item-hover-bg:              color.adjust($select-item-bg, $lightness: -5%) !default;
 $select-item-disabled-color:        #333 !default;
 $select-item-disabled-bg:           #fcfcfc !default;
-$select-item-disabled-border-color: darken($select-item-disabled-bg, 10%) !default;
+$select-item-disabled-border-color: color.adjust($select-item-disabled-bg, $lightness: -10%) !default;

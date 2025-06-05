@@ -1,3 +1,4 @@
+@use "sass:color";
 //
 // Control
 // ------------------------------
@@ -56,7 +57,7 @@
 	&.is-open > .Select-control {
 		@include border-bottom-radius( 0 );
 		background: $select-input-bg;
-		border-color: darken($select-input-border-color, 10%) $select-input-border-color lighten($select-input-border-color, 5%);
+		border-color: color.adjust($select-input-border-color, $lightness: -10%) $select-input-border-color color.adjust($select-input-border-color, $lightness: 5%);
 
 		// flip the arrow so its pointing up when the menu is open
 		.Select-arrow {
@@ -71,7 +72,7 @@
 	}
 
 	&.is-focused:not(.is-open) > .Select-control {
-		border-color: $select-input-border-focus lighten($select-input-border-focus, 5%) lighten($select-input-border-focus, 5%);
+		border-color: $select-input-border-focus color.adjust($select-input-border-focus, $lightness: 5%) color.adjust($select-input-border-focus, $lightness: 5%);
 		box-shadow: $select-input-box-shadow-focus;
 	}
 
@@ -121,7 +122,7 @@
 
 .Select-control {
 	background-color: $select-input-bg;
-	border-color: lighten($select-input-border-color, 5%) $select-input-border-color darken($select-input-border-color, 10%);
+	border-color: color.adjust($select-input-border-color, $lightness: 5%) $select-input-border-color color.adjust($select-input-border-color, $lightness: -10%);
 	border-radius: $select-input-border-radius;
 	border: $select-input-border-width solid $select-input-border-color;
 	color: $select-text-color;
@@ -189,7 +190,7 @@
 		outline: none;
 		// padding: 0;
 		line-height: 17px;  /* For IE 8 compatibility */
-		padding: (($select-input-internal-height - 14) / 2 - 2) 0 (($select-input-internal-height - 14) / 2 + 2);  /* For IE 8 compatibility */
+		padding: (($select-input-internal-height - 14) * 0.5 - 2) 0 (($select-input-internal-height - 14) * 0.5 + 2);  /* For IE 8 compatibility */
 		-webkit-appearance: none;
 
 		.is-focused & {
@@ -276,7 +277,7 @@
 .Select-arrow {
 	border-color: $select-arrow-color transparent transparent;
 	border-style: solid;
-	border-width: $select-arrow-width $select-arrow-width ($select-arrow-width / 2);
+	border-width: $select-arrow-width $select-arrow-width ($select-arrow-width * 0.5);
 	display: inline-block;
 	height: 0;
 	width: 0;
